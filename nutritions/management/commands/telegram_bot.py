@@ -221,9 +221,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Schedule the tasks
-        schedule.every().day.at("21:32").do(send_breakfast)
-        schedule.every().day.at("21:33").do(send_lunch)
-        schedule.every().day.at("21:34").do(send_dinner)
+        schedule.every().day.at("01:55").do(send_breakfast)
+        schedule.every().day.at("01:56").do(send_lunch)
+        schedule.every().day.at("02:00").do(send_dinner)
         schedule.every().monday.at("08:30").do(send_shopping_list)
 
         # Start the schedule in a new thread
