@@ -9,6 +9,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.contrib.auth import authenticate
 import requests
+from telebot.apihelper import ApiTelegramException
 
 
 # Set up Django settings
@@ -77,7 +78,7 @@ def send_meal_message(chat_id, message_text):
 def send_breakfast():
     for user_info in UserInfo.objects.all().values():
         if user_info['telegram_id'] == 0:
-            pass
+            return
         telegram_id = user_info['telegram_id']
         try:
             current_date = datetime.now()
@@ -85,13 +86,18 @@ def send_breakfast():
 
             message = f"Good morning! Here’s your breakfast:\n{day_set(telegram_id, day_of_week, 1)}"
             send_meal_message(telegram_id, message)
-        except UserSchedule.DoesNotExist:
-            pass
+        except ApiTelegramException as e:
+            # Check specifically for "chat not found" and ignore it
+            if "chat not found" in str(e):
+                pass  # Ignore and do nothing if chat is not found
+            else:
+                # If it's a different error, raise it or log it if needed
+                raise e
 
 def send_lunch():
     for user_info in UserInfo.objects.all().values():
         if user_info['telegram_id'] == 0:
-            pass
+            return
         telegram_id = user_info['telegram_id']
         try:
 
@@ -100,13 +106,18 @@ def send_lunch():
 
             message = f"Good afternoon! Here’s your lunch:\n{day_set(telegram_id, day_of_week, 2)}"
             send_meal_message(telegram_id, message)
-        except UserSchedule.DoesNotExist:
-            pass
+        except ApiTelegramException as e:
+            # Check specifically for "chat not found" and ignore it
+            if "chat not found" in str(e):
+                pass  # Ignore and do nothing if chat is not found
+            else:
+                # If it's a different error, raise it or log it if needed
+                raise e
 
 def send_dinner():
     for user_info in UserInfo.objects.all().values():
         if user_info['telegram_id'] == 0:
-            pass
+            return
         telegram_id = user_info['telegram_id']
         try:
 
@@ -116,8 +127,13 @@ def send_dinner():
 
             message = f"Good evening! Here’s your dinner:\n{day_set(telegram_id, day_of_week, 3)}"
             send_meal_message(telegram_id, message)
-        except UserSchedule.DoesNotExist:
-            pass
+        except ApiTelegramException as e:
+            # Check specifically for "chat not found" and ignore it
+            if "chat not found" in str(e):
+                pass  # Ignore and do nothing if chat is not found
+            else:
+                # If it's a different error, raise it or log it if needed
+                raise e
 
 
 def send_shopping_list():
@@ -205,9 +221,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Schedule the tasks
-        schedule.every().day.at("08:00").do(send_breakfast)
-        schedule.every().day.at("13:00").do(send_lunch)
-        schedule.every().day.at("19:00").do(send_dinner)
+        schedule.every().day.at("21:32").do(send_breakfast)
+        schedule.every().day.at("21:33").do(send_lunch)
+        schedule.every().day.at("21:34").do(send_dinner)
         schedule.every().monday.at("08:30").do(send_shopping_list)
 
         # Start the schedule in a new thread
