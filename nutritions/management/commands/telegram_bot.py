@@ -208,7 +208,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Schedule the tasks
-        schedule.every().day.at("8:00").do(send_breakfast)
+        schedule.every().day.at("08:00").do(send_breakfast)
         schedule.every().day.at("11:30").do(send_lunch)
         schedule.every().day.at("17:00").do(send_dinner)
         schedule.every().monday.at("08:30").do(send_shopping_list)
